@@ -25,7 +25,9 @@ Task Manager API — это бэкенд-приложение на основе 
   - Документация: Swagger UI
   - Контейнеризация: Docker
 
+
 ## Структура проекта
+```
 task-manager/
 ├── main.py              # Точка входа FastAPI
 ├── models.py            # Pydantic-модели и перечисление статусов
@@ -37,7 +39,7 @@ task-manager/
 ├── Dockerfile           # Конфигурация Docker
 ├── pytest.ini           # Конфигурация pytest
 ├── README.md            # Документация
-
+```
 
 ## Требования
 
@@ -54,7 +56,6 @@ task-manager/
     ```bash
     git clone <repository-url>
     cd task-manager
-    '''
 
 Создайте и активируйте виртуальное окружение:
 python -m venv .venv
@@ -71,7 +72,7 @@ source .venv/bin/activate
 ## Установка с Docker
 - Соберите Docker-образ:docker build -t task-manager .
 - Запустите контейнер:docker run -p 8000:8000 task-manager
-- Откройте Swagger UI: http://127.0.0.1:8000/docs
+- Откройте Swagger UI: http://127.0.0.1:8000/docs    - ваш хост вместо 127.0.0.1
 
 ## Тестирование
 Автоматическое тестирование с pytest
@@ -119,9 +120,9 @@ tests/test_api.py ............. [100%]
 Метод: POST
 URL: {{base_url}}/tasks/
 Заголовки:Content-Type: application/json
-
+Тело запроса (JSON):
 ```bash
-Тело запроса (JSON):{
+{
   "title": "Тестовая задача",
   "description": "Описание тестовой задачи",
   "status": "создано"
