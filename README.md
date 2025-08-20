@@ -16,12 +16,12 @@ Task Manager API — это бэкенд-приложение на основе 
   - `description`: строка (1–500 символов, поддерживает Markdown)
   - `description_html`: HTML-рендеринг описания
   - `status`: перечисление (`создано`, `в_работе`, `завершено`)
-- **Markdown**: Поле `description` поддерживает Markdown (заголовки, списки, полужирный текст, курсив), преобразуемый в HTML.
+
 - **Технологии**:
   - Backend: FastAPI
   - Тестирование: pytest
   - Рендеринг Markdown: библиотека `markdown`
-  - Хранилище: In-memory (для продакшена — PostgreSQL)
+  - Хранилище: In-memory
   - Документация: Swagger UI
   - Контейнеризация: Docker
 
@@ -54,7 +54,7 @@ task-manager/
     ```bash
     git clone <repository-url>
     cd task-manager
-
+    '''
 
 Создайте и активируйте виртуальное окружение:
 python -m venv .venv
@@ -64,29 +64,21 @@ python -m venv .venv
 source .venv/bin/activate
 
 
-Установите зависимости:pip install -r requirements.txt
+- Установите зависимости:pip install -r requirements.txt
+- Запустите приложение:uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+- Откройте Swagger UI: http://127.0.0.1:8000/docs    - ваш хост вместо 127.0.0.1
 
+## Установка с Docker
+- Соберите Docker-образ:docker build -t task-manager .
+- Запустите контейнер:docker run -p 8000:8000 task-manager
+- Откройте Swagger UI: http://127.0.0.1:8000/docs
 
-Запустите приложение:uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-
-
-Откройте Swagger UI: http://127.0.0.1:8000/docs
-
-Установка с Docker
-
-Соберите Docker-образ:docker build -t task-manager .
-
-
-Запустите контейнер:docker run -p 8000:8000 task-manager
-
-
-Откройте Swagger UI: http://127.0.0.1:8000/docs
-
-Тестирование
+## Тестирование
 Автоматическое тестирование с pytest
 Проект включает 12 тестов, покрывающих все CRUD-операции, краевые случаи (например, несуществующие задачи) и валидацию данных.
 
-Активируйте виртуальное окружение:# Windows
+Активируйте виртуальное окружение:
+# Windows
 .venv\Scripts\Activate.ps1
 # Linux/Mac
 source .venv/bin/activate
@@ -96,11 +88,13 @@ source .venv/bin/activate
 python_paths = .
 
 
-Запустите тесты из корневой директории проекта:cd task-manager
+Запустите тесты из корневой директории проекта:
+```bash
+cd task-manager
 python -m pytest
+```
 
 Для подробного вывода:python -m pytest -v
-
 
 Ожидаемый результат:
 ============================= test session starts =======================
@@ -109,7 +103,6 @@ collected 13 items
 tests/test_api.py ............. [100%]
 
 ========================== 13 passed in X.XXs ==========================
-
 
 Устранение ошибок
 Если вы видите ошибку ModuleNotFoundError: No module named 'main', убедитесь, что:
@@ -127,13 +120,13 @@ tests/test_api.py ............. [100%]
 URL: {{base_url}}/tasks/
 Заголовки:Content-Type: application/json
 
-
+```bash
 Тело запроса (JSON):{
   "title": "Тестовая задача",
   "description": "Описание тестовой задачи",
   "status": "создано"
 }
-
+```
 
 Ожидаемый ответ:
 Код: 201 Created
@@ -144,12 +137,7 @@ URL: {{base_url}}/tasks/
   "status": "создано"
 }
 
-
-
-
 Postman-скрипт (вкладка Tests для сохранения task_id):pm.environment.set("task_id", pm.response.json().id);
-
-
 
 2. GET /tasks/ — Получить список задач
 
@@ -159,7 +147,8 @@ URL: {{base_url}}/tasks/
 Тело: Отсутствует
 Ожидаемый ответ:
 Код: 200 OK
-Тело (пример):[
+Тело (пример):
+[
   {
     "id": "<уникальный-uuid>",
     "title": "Тестовая задача",
@@ -167,10 +156,6 @@ URL: {{base_url}}/tasks/
     "status": "создано"
   }
 ]
-
-
-
-
 
 3. GET /tasks/{task_id} — Получить задачу по UUID
 
@@ -180,13 +165,13 @@ URL: {{base_url}}/tasks/{{task_id}}
 Тело: Отсутствует
 Ожидаемый ответ:
 Код: 200 OK
-Тело (пример):{
+Тело (пример):
+{
   "id": "<уникальный-uuid>",
   "title": "Тестовая задача",
   "description": "Описание тестовой задачи",
   "status": "создано"
 }
-
 
 Если задача не найдена: 404 Not Found с {"detail": "Задача не найдена"}
 
@@ -199,11 +184,13 @@ URL: {{base_url}}/tasks/{{task_id}}
 Заголовки:Content-Type: application/json
 
 
-Тело запроса (JSON, можно обновить только часть полей):{
+Тело запроса (JSON, можно обновить только часть полей):
+```bash
+{
   "title": "Обновленная задача",
   "status": "в_работе"
 }
-
+```
 
 Ожидаемый ответ:
 Код: 200 OK
@@ -214,10 +201,7 @@ URL: {{base_url}}/tasks/{{task_id}}
   "status": "в_работе"
 }
 
-
 Если задача не найдена: 404 Not Found
-
-
 
 5. DELETE /tasks/{task_id} — Удалить задачу
 
@@ -231,38 +215,3 @@ URL: {{base_url}}/tasks/{{task_id}}
 
 
 
-Советы по Postman
-
-Используйте переменные {{base_url}} и {{task_id}} для упрощения.
-Тестируйте краевые случаи (например, неверный статус или несуществующий UUID).
-Для удобства экспортируйте коллекцию Postman и сохраните её в проекте.
-
-Использование API
-
-Swagger UI: Интерактивная документация доступна по http://127.0.0.1:8000/docs. Используйте её для тестирования без Postman.
-Создание задач: Используйте POST для добавления задач с уникальными данными.
-Обновление: PUT позволяет обновлять поля частично или полностью.
-Удаление: DELETE удаляет задачу по UUID.
-Список задач: GET /tasks/ возвращает все задачи.
-
-Замечания по качеству
-
-PEP8: Код отформатирован с помощью black/flake8.
-Чистый код: Модульная структура, аннотации типов, читаемые имена.
-Тесты: 100% покрытие эндпоинтов, включая краевые случаи и валидацию.
-Хранилище: In-memory для простоты. Для продакшена используйте PostgreSQL + SQLAlchemy.
-Документация: Swagger UI по /docs и данный README.
-
-Устранение неполадок
-
-Ошибка pytest ModuleNotFoundError:
-Убедитесь, что запускаете python -m pytest из корня проекта.
-Проверьте наличие pytest.ini и файлов main.py, models.py, storage.py.
-Установите зависимости: pip install -r requirements.txt.
-
-
-Ошибка FastAPI: Проверьте, что порт 8000 свободен, и используйте --reload только для разработки.
-Docker: Убедитесь, что Docker запущен, и порт 8000 не занят.
-
-Лицензия
-MIT License. См. файл LICENSE (если добавлен в проект).
